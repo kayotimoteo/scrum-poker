@@ -1,0 +1,53 @@
+name: build-staging
+
+on:
+  push:
+    branches:
+      - staging
+
+jobs:
+  backend:
+    name: Backend API
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./apps/api
+    steps:
+    - uses: actions/checkout@v1
+    - name: Use Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: 16.x
+    - name: Publish to Github Packages Registry
+      uses: elgohr/Publish-Docker-Github-Action@master
+      with:
+        name: kayotimoteo/scrum-poker
+        registry: docker.pkg.github.com
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        dockerfile: Dockerfile.staging
+        tags: staging
+    - name: Deploy package to digitalocean
+      uses: appleboy/ssh-action@master
+      env:
+          GITHUB_USERNAME: ${{ secrets.USERNAME }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_KEY }}
+        port: ${{ secrets.SSH_PORT }}
+        envs: GITHUB_USERNAME, GITHUB_TOKEN, DATABASE_URL
+        script: |
+          docker login docker.pkg.github.com -u $GITHUB_USERNAME -p $GITHUB_TOKEN
+          docker pull docker.pkg.github.com/kayotimoteo/scrum-poker:staging
+          docker stop api-scrum-poker
+          docker rm api-scrum-poker
+          docker run -dit --name api-scrum-poker -p 40000:3333 -e ENV=staging -e DATABASE_URL=$DATABASE_URL -e PORT=3333 -l traefik.backend=api-scrum-poker -l traefik.frontend.rule=Host:scrum.villacity.fun -l traefik.docker.network=web -l traefik.port=3333 --network web docker.pkg.github.com/kayotimoteo/scrum-poker:staging
+    # - name: send message to Discord
+    #   uses: appleboy/discord-action@master
+    #   with:
+    #     webhook_id: ${{ secrets.WEBHOOK_ID }}
+    #     webhook_token: ${{ secrets.WEBHOOK_TOKEN }}
+    #     message: Build complete on Misura Project 😉✅
