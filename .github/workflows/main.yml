@@ -4,14 +4,12 @@ on:
   push:
     branches:
       - staging
-
+    paths:
+      - "./apps/api"
 jobs:
   backend:
     name: Backend API
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./apps/api
     steps:
     - uses: actions/checkout@v1
     - name: Use Node.js
