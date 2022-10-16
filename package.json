@@ -15,8 +15,6 @@
   "dependencies": {
     "api": "*",
     "eslint-config-custom": "*",
-    "socket.io": "^4.5.2",
-    "socket.io-client": "^4.5.2",
     "tsconfig": "*",
     "web": "*"
   },
