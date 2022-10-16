@@ -4,9 +4,7 @@ on:
   push:
     branches:
       - main
-    paths:
-      - "apps/api"
-      
+
 jobs:
   backend:
     name: Backend API
@@ -24,6 +22,7 @@ jobs:
         registry: docker.pkg.github.com
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.GITHUB_TOKEN }}
+        workdir: apps/api
         dockerfile: Dockerfile.staging
         tags: staging
     - name: Deploy package to digitalocean
