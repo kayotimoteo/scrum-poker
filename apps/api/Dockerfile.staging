@@ -1,0 +1,17 @@
+FROM node:lts-alpine
+
+ENV PORT=3333
+
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+
+RUN yarn
+
+COPY . .
+
+RUN yarn build
+
+EXPOSE $PORT
+
+CMD yarn start
