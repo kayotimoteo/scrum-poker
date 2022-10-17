@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { IoIosCopy } from "react-icons/io";
 import { BiShow } from "react-icons/bi";
 import { FiRefreshCw } from "react-icons/fi";
+import Head from "next/head";
 
 interface Users {
   id: string;
@@ -127,6 +128,9 @@ export default function Home() {
 
   return (
     <main className="w-full flex flex-col h-screen bg-indigo-900">
+      <Head>
+        <title>Scrum Poker</title>
+      </Head>
       <h1 className="self-center font-bold text-white mt-10 text-6xl">
         Estimativa G02
       </h1>
