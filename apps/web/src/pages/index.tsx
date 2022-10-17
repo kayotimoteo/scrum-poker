@@ -13,7 +13,7 @@ interface Users {
   spectate: boolean;
 }
 
-let socket = io("localhost:3333", {
+let socket = io("scrum.villacity.fun", {
   reconnection: false,
   reconnectionAttempts: 2,
   reconnectionDelayMax: 5000,
@@ -139,7 +139,11 @@ export default function Home() {
                   Digite seu nome abaixo para entrar na sala N° {query.room}
                 </p>
                 <button
-                  onClick={() => navigator.clipboard.writeText(asPath)}
+                  onClick={() =>
+                    navigator.clipboard.writeText(
+                      `scrum-poker.vercel.app${asPath}`
+                    )
+                  }
                   className="bg-indigo-500 text-lg rounded-md h-10 p-2 hover:opacity-80 transition-all"
                 >
                   <IoIosCopy />
