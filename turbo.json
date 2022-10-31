@@ -11,5 +11,6 @@
     "dev": {
       "cache": false
     }
-  }
+  },
+  "globalEnv": ["NEXT_PUBLIC_WS", "NEXT_PUBLIC_URL"]
 }

@@ -58,10 +58,20 @@ export class MainGateway {
       };
     }
     this.server.in(client.id).socketsJoin(payload.room);
-    this.server.to(payload.room).emit(
-      "voteReceived",
-      users.filter((x) => x.room === payload.room)
-    );
+    const hiddenResult = users
+      .filter((x) => x.room === payload.room)
+      .map((item) => {
+        if (item.value !== 0) {
+          return {
+            ...item,
+            value: 1000,
+          };
+        }
+        return item;
+      });
+    this.server
+      .to(payload.room)
+      .emit("voteReceived", { users: hiddenResult, reset: false });
   }
 
   @SubscribeMessage("vote")
@@ -86,17 +96,19 @@ export class MainGateway {
         }
         return item;
       });
-    this.server.to(payload.room).emit("voteReceived", hiddenResult);
+    this.server
+      .to(payload.room)
+      .emit("voteReceived", { users: hiddenResult, reset: false });
   }
 
   @SubscribeMessage("reveal")
   handleReveal(client: any, payload: any): void {
     const getUser = users.find((x) => x.id === client.id);
     console.log(users.filter((x) => x.room === getUser.room));
-    this.server.to(getUser.room).emit(
-      "voteReceived",
-      users.filter((x) => x.room === getUser.room)
-    );
+    this.server.to(getUser.room).emit("voteReceived", {
+      users: users.filter((x) => x.room === getUser.room),
+      reset: false,
+    });
   }
 
   @SubscribeMessage("reset")
@@ -113,17 +125,18 @@ export class MainGateway {
       return item;
     });
 
-    this.server.to(getUser.room).emit(
-      "voteReceived",
-      users
-        .filter((x) => x.room === getUser.room)
-        .map((item) => {
-          return {
-            ...item,
-            value: 0,
-          };
-        })
-    );
+    const result = users
+      .filter((x) => x.room === getUser.room)
+      .map((item) => {
+        return {
+          ...item,
+          value: 0,
+        };
+      });
+
+    this.server
+      .to(getUser.room)
+      .emit("voteReceived", { users: result, reset: true });
   }
 
   handleDisconnect(client: Socket) {
@@ -132,7 +145,7 @@ export class MainGateway {
     const room = users.find((x) => x.id === client.id);
     users = users.filter((x) => x.id !== client.id);
     if (room) {
-      this.server.to(room.room).emit("voteReceived", users);
+      this.server.to(room.room).emit("voteReceived", { users, reset: true });
     }
   }
 
