@@ -14,7 +14,7 @@ interface Users {
   spectate: boolean;
 }
 
-let socket = io("scrum.villacity.fun", {
+let socket = io(process.env.NEXT_PUBLIC_WS, {
   reconnection: false,
   reconnectionAttempts: 2,
   reconnectionDelayMax: 5000,
@@ -27,6 +27,7 @@ export default function Home() {
   const [nickname, setNickname] = useState<string>();
   const [persistNickname, setPersistNickname] = useState<string>();
   const [spectateMode, setSpectateMode] = useState(false);
+  const [actualVote, setActualVote] = useState(0);
 
   const { query, push, asPath } = useRouter();
 
@@ -51,7 +52,8 @@ export default function Home() {
       // });
 
       socket.on("voteReceived", (arg) => {
-        setUsers(arg);
+        if (arg.reset) setActualVote(0);
+        setUsers(arg.users);
       });
 
       socket.on("connect_failed", function () {
@@ -108,6 +110,7 @@ export default function Home() {
 
   const handleVote = useCallback(
     (value: number) => {
+      setActualVote(value);
       socket.emit("vote", {
         room: room,
         nickname: nickname,
@@ -145,7 +148,7 @@ export default function Home() {
                 <button
                   onClick={() =>
                     navigator.clipboard.writeText(
-                      `scrum-poker.vercel.app${asPath}`
+                      `${process.env.NEXT_PUBLIC_URL + asPath}`
                     )
                   }
                   className="bg-indigo-500 text-lg rounded-md h-10 p-2 hover:opacity-80 transition-all"
@@ -233,7 +236,11 @@ export default function Home() {
                 <button
                   key={item}
                   onClick={() => handleVote(item)}
-                  className="text-5xl font-bold text-white cursor-pointer border border-white rounded-md h-28 w-20 transition-all hover:bg-indigo-500"
+                  className={`text-5xl font-bold text-white cursor-pointer 
+                  border border-white rounded-md h-28 w-20 transition-all 
+                  ${
+                    item === actualVote ? "bg-indigo-500" : ""
+                  } hover:bg-indigo-500`}
                 >
                   {item}
                 </button>
