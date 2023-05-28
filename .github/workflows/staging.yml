@@ -42,4 +42,4 @@ jobs:
             docker pull docker.pkg.github.com/kayotimoteo/scrum-poker:staging
             docker stop api-scrum-poker
             docker rm api-scrum-poker
-            docker run -dit --name api-scrum-poker -p 4020:3333 -e ENV=staging -e PORT=3333 -l --network nginx_web2 docker.pkg.github.com/kayotimoteo/scrum-poker:staging
+            docker run -dit --name api-scrum-poker -p 4020:3333 -e ENV=staging -e PORT=3333 --network nginx_web2 docker.pkg.github.com/kayotimoteo/scrum-poker:staging
