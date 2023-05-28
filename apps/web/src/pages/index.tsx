@@ -34,10 +34,12 @@ export default function Home() {
   useEffect(() => {
     try {
       socket.on("connect", () => {
+        console.log("Conectado!");
         setIsConnected(true);
       });
 
       socket.on("disconnect", () => {
+        console.log("Desconectado!");
         setIsConnected(false);
       });
 
