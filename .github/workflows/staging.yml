@@ -31,13 +31,12 @@ jobs:
         env:
           GITHUB_USERNAME: ${{ secrets.USERNAME }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
-          envs: GITHUB_USERNAME, GITHUB_TOKEN, DATABASE_URL
+          envs: GITHUB_USERNAME, GITHUB_TOKEN
           script: |
             docker login docker.pkg.github.com -u $GITHUB_USERNAME -p $GITHUB_TOKEN
             docker pull docker.pkg.github.com/kayotimoteo/scrum-poker:staging
