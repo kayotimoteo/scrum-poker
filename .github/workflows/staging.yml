@@ -9,6 +9,7 @@ jobs:
   backend:
     name: Backend API
     runs-on: ubuntu-latest
+    environment: staging
     steps:
       - uses: actions/checkout@v3
       - name: Use Node.js
