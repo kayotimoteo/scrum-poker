@@ -1,20 +1,20 @@
-name: build-production
+name: build-staging
 
 on:
   push:
     branches:
-      - main
+      - staging
 
 jobs:
   backend:
     name: Backend API
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v3
       - name: Use Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: 18.x
       - name: Publish to Github Packages Registry
         uses: elgohr/Publish-Docker-Github-Action@v5
         with:
@@ -26,7 +26,7 @@ jobs:
           dockerfile: Dockerfile.staging
           tags: staging
       - name: Deploy package to digitalocean
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v0.1.10
         env:
           GITHUB_USERNAME: ${{ secrets.USERNAME }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -42,4 +42,4 @@ jobs:
             docker pull docker.pkg.github.com/kayotimoteo/scrum-poker:staging
             docker stop api-scrum-poker
             docker rm api-scrum-poker
-            docker run -dit --name api-scrum-poker -p 40000:3333 -e ENV=staging -e DATABASE_URL=$DATABASE_URL -e PORT=3333 -l traefik.backend=api-scrum-poker -l traefik.frontend.rule=Host:scrum.villacity.fun -l traefik.docker.network=web -l traefik.port=3333 --network web docker.pkg.github.com/kayotimoteo/scrum-poker:staging
+            docker run -dit --name api-scrum-poker -p 4020:3333 -e ENV=staging -e PORT=3333 -l --network nginx_web2 docker.pkg.github.com/kayotimoteo/scrum-poker:staging
