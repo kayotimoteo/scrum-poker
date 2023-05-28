@@ -14,6 +14,7 @@ interface Users {
 }
 
 let socket = io(process.env.NEXT_PUBLIC_WS, {
+  secure: false,
   reconnection: true,
   reconnectionAttempts: 5,
   reconnectionDelayMax: 5000,
