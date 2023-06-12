@@ -42,4 +42,4 @@ jobs:
             docker pull docker.pkg.github.com/kayotimoteo/scrum-poker:staging
             docker stop api-scrum-poker-staging
             docker rm api-scrum-poker-staging
-            docker run -dit --name api-scrum-poker-staging -p 40001:3333 -e ENV=staging -e DATABASE_URL=$DATABASE_URL -e PORT=3333 -l traefik.backend=api-scrum-poker-staging -l traefik.frontend.rule=Host:scrum-staging.villacity.fun -l traefik.docker.network=web -l traefik.port=3333 --network web docker.pkg.github.com/kayotimoteo/scrum-poker:staging
+            docker run -dit --name api-scrum-poker-staging -p 40001:3333 -e ENV=staging -e PORT=3333 --network nginx_default docker.pkg.github.com/kayotimoteo/scrum-poker:staging
